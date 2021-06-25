@@ -2,9 +2,14 @@
 import asyncio
 import discord
 import prettify_exceptions
+import pytz
+import traceback
+import sys
 
 
 from discord.ext import commands
+
+from .utils.src import GameNotFound
 
 
 class ErrorHandler(commands.Cog):
@@ -16,6 +21,35 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+        # This prevents any commands with local handlers being handled here in on_command_error.
+        if hasattr(ctx.command, "on_error"):
+            return
+
+        # This prevents any cogs with an overwritten cog_command_error being handled here.
+        cog = ctx.cog
+        if cog:
+            if cog._get_overridden_method(cog.cog_command_error) is not None:
+                return
+
+        # Allows us to check for original exceptions raised and sent to CommandInvokeError.
+        # If nothing is found. We keep the exception passed to on_command_error.
+        error = getattr(error, "original", error)
+
+        if isinstance(error, pytz.exceptions.UnknownTimeZoneError):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.reply(
+                "That's not a valid timezone. You can look them up at https://kevinnovak.github.io/Time-Zone-Picker/"
+            )
+
+        if isinstance(error, GameNotFound):
+            e = discord.Embed(title=str(error), colour=discord.Colour.red())
+            return await ctx.reply(embed=e)
+
+        if isinstance(error, pytz.exceptions.UnknownTimeZoneError):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.reply(
+                "That's not a valid timezone. You can look them up at https://kevinnovak.github.io/Time-Zone-Picker/"
+            )
         if isinstance(error, commands.CommandNotFound):
             await ctx.reply("Command not Found")
             return
@@ -43,6 +77,13 @@ class ErrorHandler(commands.Cog):
                 color=0x2E3137
             )
             await ctx.reply(embed=error)
+        else:
+            print(
+                "Ignoring exception in command {}:".format(ctx.command), file=sys.stderr
+            )
+            traceback.print_exception(
+                type(error), error, error.__traceback__, file=sys.stderr
+            )
 
 
 def setup(bot):
