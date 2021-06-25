@@ -1,5 +1,4 @@
 # directory
-.vscode/
 __pycache__/
 
 # config
@@ -12,5 +11,9 @@ discord.log
 starboard_config.json
 database.db
 
-#Status
+# Status
 cogs/status.py
+
+# Packages
+poetry.lock
+pyproject.toml
