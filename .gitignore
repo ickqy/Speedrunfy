@@ -1,0 +1,16 @@
+# directory
+.vscode/
+__pycache__/
+
+# config
+config.py
+
+# log
+discord.log
+
+# Database
+starboard_config.json
+database.db
+
+#Status
+cogs/status.py
