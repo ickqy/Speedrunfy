@@ -22,7 +22,6 @@ def get_cogs():
         "cogs.starboard",
         "cogs.status",
         "cogs.error_handler",
-        "cogs.time",
         "cogs.src",
         "cogs.runget",
         "cogs.fair",
@@ -81,7 +80,6 @@ class Speedrunfy(commands.Bot):
         # Session
         self.session = aiohttp.ClientSession()
         self.loop.create_task(self.asyncInit())
-
 
     async def asyncInit(self):
         """`__init__` but async"""
