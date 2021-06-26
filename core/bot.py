@@ -80,6 +80,8 @@ class Speedrunfy(commands.Bot):
 
         # Session
         self.session = aiohttp.ClientSession()
+        self.loop.create_task(self.asyncInit())
+
 
     async def asyncInit(self):
         """`__init__` but async"""

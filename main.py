@@ -12,6 +12,7 @@ except ImportError:
 else:
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
+
 @contextlib.contextmanager
 def setup_logging():
     try:

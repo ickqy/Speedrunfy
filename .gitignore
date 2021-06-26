@@ -10,6 +10,7 @@ discord.log
 # Database
 starboard_config.json
 database.db
+.replit
 
 # Status
 cogs/status.py
